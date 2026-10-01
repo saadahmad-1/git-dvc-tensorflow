@@ -1,0 +1,45 @@
+from pathlib import Path
+import argparse
+import numpy as np
+import yaml
+
+
+ROOT = Path(__file__).resolve().parents[1]
+RAW_DIR = ROOT / "data" / "raw"
+PROCESSED_DIR = ROOT / "data" / "processed"
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", default="config.yaml")
+    args = parser.parse_args()
+
+    with open(ROOT / args.config) as f:
+        config = yaml.safe_load(f)
+
+    validation_split = config["preprocessing"]["validation_split"]
+
+    x_train = np.load(RAW_DIR / "x_train.npy").astype("float32") / 255.0
+    y_train = np.load(RAW_DIR / "y_train.npy")
+    x_test = np.load(RAW_DIR / "x_test.npy").astype("float32") / 255.0
+    y_test = np.load(RAW_DIR / "y_test.npy")
+
+    split = int(len(x_train) * (1 - validation_split))
+
+    x_train, x_val = x_train[:split], x_train[split:]
+    y_train, y_val = y_train[:split], y_train[split:]
+
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+
+    np.save(PROCESSED_DIR / "x_train.npy", x_train)
+    np.save(PROCESSED_DIR / "y_train.npy", y_train)
+    np.save(PROCESSED_DIR / "x_val.npy", x_val)
+    np.save(PROCESSED_DIR / "y_val.npy", y_val)
+    np.save(PROCESSED_DIR / "x_test.npy", x_test)
+    np.save(PROCESSED_DIR / "y_test.npy", y_test)
+
+    print(f"Saved processed arrays to {PROCESSED_DIR}")
+
+
+if __name__ == "__main__":
+    main()
