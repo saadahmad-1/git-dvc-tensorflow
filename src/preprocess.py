@@ -24,11 +24,15 @@ def main():
 
     rng = np.random.default_rng(seed)
 
-    x_train = np.load(RAW_DIR / "x_train.npy").astype("float32") / 255.0
+    x_train = np.load(RAW_DIR / "x_train.npy").astype("float32")
     y_train = np.load(RAW_DIR / "y_train.npy")
 
-    x_test = np.load(RAW_DIR / "x_test.npy").astype("float32") / 255.0
+    x_test = np.load(RAW_DIR / "x_test.npy").astype("float32")
     y_test = np.load(RAW_DIR / "y_test.npy")
+
+    # Teammate normalization: standardization
+    x_train = (x_train - x_train.mean()) / x_train.std()
+    x_test = (x_test - x_test.mean()) / x_test.std()
 
     indices = rng.permutation(len(x_train))
 
