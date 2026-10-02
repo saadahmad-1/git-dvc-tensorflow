@@ -3,3 +3,5 @@ __pycache__/
 .dvc/cache 
 *.h5
 /models
+.env
+.dvc/config
