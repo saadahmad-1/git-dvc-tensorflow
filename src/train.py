@@ -1,8 +1,10 @@
 from pathlib import Path
 import argparse
 import csv
+
 import numpy as np
 import yaml
+
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Flatten, Dense, Dropout
 from tensorflow.keras.optimizers import Adam
@@ -15,13 +17,13 @@ MODEL_DIR = ROOT / "models"
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="config.yaml")
+    parser.add_argument("--config", default="params.yaml")
     args = parser.parse_args()
 
-    with open(ROOT / args.config) as f:
-        config = yaml.safe_load(f)
+    with open(ROOT / args.config, "r") as f:
+        params = yaml.safe_load(f)
 
-    cfg = config["training"]
+    cfg = params["train"]
 
     x_train = np.load(DATA_DIR / "x_train.npy")
     y_train = np.load(DATA_DIR / "y_train.npy")
@@ -31,7 +33,7 @@ def main():
     model = Sequential([
         Flatten(input_shape=x_train.shape[1:]),
         Dense(cfg["dense_units"], activation="relu"),
-        Dropout(cfg["dropout"]),
+        Dropout(cfg["dropout_rate"]),
         Dense(10, activation="softmax"),
     ])
 

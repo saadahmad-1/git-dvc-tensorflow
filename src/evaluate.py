@@ -1,6 +1,7 @@
 from pathlib import Path
 import argparse
 import json
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -24,11 +25,16 @@ def main():
 
     loss, accuracy = model.evaluate(x_test, y_test, verbose=0)
 
-    predictions = np.argmax(model.predict(x_test, verbose=0), axis=1)
+    predictions = np.argmax(
+        model.predict(x_test, verbose=0),
+        axis=1,
+    )
+
     cm = confusion_matrix(y_test, predictions)
 
     display = ConfusionMatrixDisplay(confusion_matrix=cm)
     display.plot()
+
     plt.title("Fashion-MNIST Confusion Matrix")
     plt.tight_layout()
     plt.savefig(ROOT / "confusion_matrix.png")

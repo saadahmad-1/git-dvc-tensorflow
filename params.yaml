@@ -1,9 +1,10 @@
-preprocessing:
-  validation_split: 0.1
+preprocess:
+  test_size: 0.1
+  seed: 42
 
-training:
+train:
   dense_units: 128
-  dropout: 0.2
+  dropout_rate: 0.2
   learning_rate: 0.001
   epochs: 10
   batch_size: 32

@@ -1,8 +1,8 @@
 from pathlib import Path
 import argparse
+
 import numpy as np
 import yaml
-
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW_DIR = ROOT / "data" / "raw"
@@ -11,20 +11,31 @@ PROCESSED_DIR = ROOT / "data" / "processed"
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="config.yaml")
+    parser.add_argument("--config", default="params.yaml")
     args = parser.parse_args()
 
-    with open(ROOT / args.config) as f:
-        config = yaml.safe_load(f)
+    with open(ROOT / args.config, "r") as f:
+        params = yaml.safe_load(f)
 
-    validation_split = config["preprocessing"]["validation_split"]
+    cfg = params["preprocess"]
+
+    test_size = cfg["test_size"]
+    seed = cfg["seed"]
+
+    rng = np.random.default_rng(seed)
 
     x_train = np.load(RAW_DIR / "x_train.npy").astype("float32") / 255.0
     y_train = np.load(RAW_DIR / "y_train.npy")
+
     x_test = np.load(RAW_DIR / "x_test.npy").astype("float32") / 255.0
     y_test = np.load(RAW_DIR / "y_test.npy")
 
-    split = int(len(x_train) * (1 - validation_split))
+    indices = rng.permutation(len(x_train))
+
+    x_train = x_train[indices]
+    y_train = y_train[indices]
+
+    split = int(len(x_train) * (1 - test_size))
 
     x_train, x_val = x_train[:split], x_train[split:]
     y_train, y_val = y_train[:split], y_train[split:]

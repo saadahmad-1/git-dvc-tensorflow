@@ -2,7 +2,6 @@ from pathlib import Path
 import numpy as np
 from tensorflow.keras.datasets import fashion_mnist
 
-
 ROOT = Path(__file__).resolve().parents[1]
 RAW_DIR = ROOT / "data" / "raw"
 
